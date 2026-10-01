@@ -1,0 +1,234 @@
+services:
+
+  # --- Service Discovery ---
+  eureka-server:
+    build: ../eureka-server        # usa o Dockerfile dessa pasta para construir a imagem
+    container_name: eureka-server  # nome fixo do container (e nome que os outros usam na rede)
+    ports:
+      - "8761:8761"                # porta_da_maquina:porta_do_container -> localhost:8761
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - microservicos-net           # entra na rede compartilhada com os outros serviços
+
+  # --- Configurações centralizadas (lê o config-repo) ---
+  config-server:
+    build: ../config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    volumes:
+      # monta a pasta config-repo (do seu Mac) dentro do container em /config-repo
+      - ../config-repo:/config-repo
+    environment:
+      # Backend "native" = le os .properties direto da pasta montada acima.
+      # O config-repo/ e uma pasta comum, sem .git, então o backend git
+      # (spring.cloud.config.server.git.uri) não funciona aqui: ele exige um
+      # repositório Git de verdade e falha com "No .git at file:///config-repo".
+      # Sem configuração, os serviços subiriam sem server.port, na porta 8080,
+      # e as portas publicadas abaixo apontariam para onde ninguém escuta.
+      - SPRING_PROFILES_ACTIVE=native
+      - SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS=file:///config-repo
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - microservicos-net
+
+  # --- Identity Provider ---
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7
+    container_name: keycloak
+    command: start-dev --http-port=8080 --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak/ecommerce-realm.json:/opt/keycloak/data/import/ecommerce-realm.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080; printf 'GET /realms/ecommerce/.well-known/openid-configuration HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3; grep -q '200 OK' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    ports:
+      - "8080:8080"
+    networks:
+      - microservicos-net
+
+  # --- Serviço de produtos ---
+  produtos-service:
+    build: ../produtos-service
+    container_name: produtos-service
+    depends_on:
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+    environment:
+      # troca "localhost" por "config-server", o nome do serviço na rede Docker
+      - CONFIG_SERVER_URL=http://config-server:8888
+      # ativa o profile "docker", que faz o config-server servir também
+      # produtos-service-docker.properties (sobrescreve a URL do Eureka)
+      - SPRING_PROFILES_ACTIVE=docker
+      # troca "localhost" por "eureka-server", idem
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - microservicos-net
+
+  # --- Serviço de vendas ---
+  vendas-service:
+    build: ../vendas-service
+    container_name: vendas-service
+    depends_on:
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:8888
+      # ativa o profile "docker", que faz o config-server servir também
+      # vendas-service-docker.properties (sobrescreve a URL do Eureka)
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+    ports:
+      - "8082:8082"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8082/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - microservicos-net
+  
+  fornecedores-service:
+    build: ../fornecedores-service
+    container_name: fornecedores-service
+    depends_on:
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:8888
+      # ativa o profile "docker", que faz o config-server servir também
+      # fornecedores-service-docker.properties (sobrescreve a URL do Eureka)
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+    ports:
+      - "8083:8083"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8083/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - microservicos-net
+
+  # --- Serviço de cadastro de usuários ---
+  auth-service:
+    build: ../auth-service
+    container_name: auth-service
+    depends_on:
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:8888
+      # ativa o profile "docker", que faz o config-server servir também
+      # auth-service-docker.properties (sobrescreve a URL do Eureka)
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+      - KEYCLOAK_TOKEN_URI=http://keycloak:8080/realms/ecommerce/protocol/openid-connect/token
+      - KEYCLOAK_CLIENT_ID=auth-service
+      - KEYCLOAK_CLIENT_SECRET=
+      - KEYCLOAK_ADMIN_TOKEN_URI=http://keycloak:8080/realms/master/protocol/openid-connect/token
+      - KEYCLOAK_ADMIN_USERS_URI=http://keycloak:8080/admin/realms/ecommerce/users
+      - KEYCLOAK_ADMIN_USERNAME=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "8084:8084"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8084/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - microservicos-net
+  
+  # --- API Gateway (porta de entrada única, roteia por nome de serviço no Eureka) ---
+  gateway:
+    build: ../gateway
+    container_name: gateway
+    depends_on:
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8085/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/ecommerce
+    ports:
+      - "8085:8085"
+    networks:
+      - microservicos-net
+
+# Rede virtual que conecta todos os containers acima. É o que permite
+# um container chamar o outro pelo nome (ex: http://eureka-server:8761)
+# em vez de precisar saber um IP.
+networks:
+  microservicos-net:
+    driver: bridge   # tipo padrão de rede local isolada do Docker

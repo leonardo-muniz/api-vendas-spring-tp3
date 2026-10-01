@@ -1,0 +1,65 @@
+name: Build & Push Microservices Docker Images
+
+on:
+  push:
+    branches: [ "main" ]
+
+# Permissão explícita para criar pacotes no GHCR
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - 'eureka-server'
+          - 'config-server'
+          - 'gateway'
+          - 'produtos-service'
+          - 'vendas-service'
+          - 'fornecedores-service'
+          - 'auth-service'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # 1. Compila a aplicação
+      - name: Build JAR
+        working-directory: ${{ matrix.service }}
+        run: |
+          if [ -f "mvnw" ]; then chmod +x mvnw && ./mvnw clean package -DskipTests; else mvn clean package -DskipTests; fi
+
+      # 2. Converte o nome do usuário/organização para minúsculas (requisito do GHCR)
+      - name: Lowercase Repository Owner
+        id: repo_owner
+        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_OUTPUT
+
+      # 3. Autentica no GitHub Container Registry
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 4. Constrói e envia a Imagem Docker com prefixo ecommerce-
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./${{ matrix.service }}
+          push: true
+          tags: |
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/api_vendas-${{ matrix.service }}:latest
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/api_vendas-${{ matrix.service }}:${{ github.sha }}
