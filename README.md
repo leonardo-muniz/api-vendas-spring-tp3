@@ -1,5 +1,7 @@
 # API de Vendas — Microsserviços com Spring Boot e Spring Cloud
 
+[![Build passing](https://github.com/leonardo-muniz/api-vendas-spring-tp3/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/leonardo-muniz/api-vendas-spring-tp3/actions/workflows/deploy.yml?query=branch%3Amain)
+
 ## Identificação acadêmica
 
 | Campo | Informação |
