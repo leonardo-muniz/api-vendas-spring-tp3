@@ -126,14 +126,14 @@ sequenceDiagram
 ├── fornecedores-service/         # microsserviço desenvolvido na atividade
 │   └── src/
 │       ├── main/java/.../
-│       │   ├── client/            # cliente Feign para produtos
-│       │   ├── config/            # carga inicial e segurança
-│       │   ├── controller/        # endpoints REST
-│       │   ├── dto/               # objetos de transferência
-│       │   ├── model/             # entidade Fornecedor
-│       │   ├── repository/        # acesso ao H2
-│       │   └── service/            # regras de negócio
-│       └── test/                   # testes automatizados
+│       │   ├── client/           # cliente Feign para produtos
+│       │   ├── config/           # carga inicial e segurança
+│       │   ├── controller/       # endpoints REST
+│       │   ├── dto/              # objetos de transferência
+│       │   ├── model/            # entidade Fornecedor
+│       │   ├── repository/       # acesso ao H2
+│       │   └── service/          # regras de negócio
+│       └── test/                 # testes automatizados
 ├── gateway/                      # entrada HTTP e segurança reativa
 ├── produtos-service/             # catálogo de produtos
 ├── vendas-service/               # vendas
