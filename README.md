@@ -4,8 +4,7 @@
 
 | Campo | Informação |
 |---|---|
-| Nome completo | **Preencher com o nome do aluno** |
-| Matrícula | **Preencher com a matrícula** |
+| Nome completo | **Leonardo da Conceição Muniz** |
 | Disciplina | Microsserviços e DevOps com Spring Boot e Spring Cloud |
 | Branch da atividade | `main` |
 
