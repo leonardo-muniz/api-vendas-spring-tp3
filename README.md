@@ -8,7 +8,7 @@
 |---|---|
 | Nome completo | **Leonardo da Conceição Muniz** |
 | Disciplina | Microsserviços e DevOps com Spring Boot e Spring Cloud |
-| Branch da atividade | `main` |
+| Branch da atividade | `at-leonardomuniz` |
 
 > Este README reúne a descrição técnica do projeto e o roteiro das evidências solicitadas no Assessment. Os marcadores de imagem devem ser substituídos pelos prints reais obtidos durante a execução. Não devem ser utilizados prints simulados.
 
@@ -347,21 +347,21 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 1 — Fork, clone, Eureka e `produtos-service`
 
-- [ ] Fork do repositório original para a conta pessoal.
-- [ ] Repositório clonado localmente.
-- [ ] `eureka-server` e `produtos-service` iniciados.
-- [ ] `produtos-service` visível no painel do Eureka em `http://localhost:8761`.
+- [x] Fork do repositório original para a conta pessoal.
+- [x] Repositório clonado localmente.
+- [x] `eureka-server` e `produtos-service` iniciados.
+- [x] `produtos-service` visível no painel do Eureka em `http://localhost:8761`.
 
-**Evidência:** `docs/evidencias/01-eureka-produtos.png`
+**Evidência:** `docs/evidencias/01-06-eureka-fornecedores.png`
 
-![Exercício 1 — produtos-service registrado no Eureka](docs/evidencias/01-eureka-produtos.png)
+![Exercício 1 — produtos-service registrado no Eureka](docs/evidencias/01-06-eureka-fornecedores.png)
 
 ### Exercício 2 — Branch, identificação, commit e Pull Request
 
-- [ ] Branch criada com o padrão `atividade-seunome`.
-- [ ] Nome completo e matrícula preenchidos neste README.
-- [ ] Commit realizado e branch enviada ao GitHub.
-- [ ] Pull Request aberto da branch para `main` do próprio fork.
+- [x] Branch criada com o padrão `atividade-seunome`.
+- [x] Nome completo preenchido neste README.
+- [x] Commit realizado e branch enviada ao GitHub.
+- [x] Pull Request aberto da branch para `main` do próprio fork.
 
 **Evidência:** `docs/evidencias/02-pull-request.png`
 
@@ -369,9 +369,9 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 3 — Criação e inicialização do `fornecedores-service`
 
-- [ ] `artifactId`, `name`, pacote e classe principal configurados.
-- [ ] `spring.application.name=fornecedores-service`.
-- [ ] Porta `8083` utilizada sem erro de inicialização.
+- [x] `artifactId`, `name`, pacote e classe principal configurados.
+- [x] `spring.application.name=fornecedores-service`.
+- [x] Porta `8083` utilizada sem erro de inicialização.
 
 **Evidência:** `docs/evidencias/03-servico-iniciado.png`
 
@@ -379,12 +379,12 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 4 — Entidade, repositório e cinco registros no H2
 
-- [ ] Entidade `Fornecedor` com `id` gerado automaticamente.
-- [ ] `nome` obrigatório.
-- [ ] `cnpj` obrigatório e único.
-- [ ] Repositório JPA criado.
-- [ ] Cinco fornecedores carregados automaticamente na inicialização.
-- [ ] Tabela consultada pelo H2 Console.
+- [x] Entidade `Fornecedor` com `id` gerado automaticamente.
+- [x] `nome` obrigatório.
+- [x] `cnpj` obrigatório e único.
+- [x] Repositório JPA criado.
+- [x] Cinco fornecedores carregados automaticamente na inicialização.
+- [x] Tabela consultada pelo H2 Console.
 
 **Evidência:** `docs/evidencias/04-h2-cinco-fornecedores.png`
 
@@ -392,9 +392,9 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 5 — Consultas GET e retorno 404
 
-- [ ] `GET /api/fornecedores` retorna a lista.
-- [ ] `GET /api/fornecedores/{id}` retorna o fornecedor existente.
-- [ ] Identificador inexistente retorna HTTP `404`.
+- [x] `GET /api/fornecedores` retorna a lista.
+- [x] `GET /api/fornecedores/{id}` retorna o fornecedor existente.
+- [x] Identificador inexistente retorna HTTP `404`.
 
 **Evidências:** `docs/evidencias/05-get-lista.png` e `docs/evidencias/05-get-404.png`
 
@@ -404,21 +404,21 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 6 — Registro do serviço no Eureka
 
-- [ ] Dependência Eureka presente no `pom.xml`.
-- [ ] Propriedades de registro configuradas.
-- [ ] `FORNECEDORES-SERVICE` visível no painel do Eureka.
+- [x] Dependência Eureka presente no `pom.xml`.
+- [x] Propriedades de registro configuradas.
+- [x] `FORNECEDORES-SERVICE` visível no painel do Eureka.
 
-**Evidência:** `docs/evidencias/06-eureka-fornecedores.png`
+**Evidência:** `docs/evidencias/01-06-eureka-fornecedores.png`
 
-![Exercício 6 — fornecedores-service registrado no Eureka](docs/evidencias/06-eureka-fornecedores.png)
+![Exercício 6 — fornecedores-service registrado no Eureka](docs/evidencias/01-06-eureka-fornecedores.png)
 
 ### Exercício 7 — Config Server e perfil centralizado
 
-- [ ] Arquivo de configuração criado em `config-repo`.
-- [ ] Porta, H2 e Eureka externalizados.
-- [ ] Config Server iniciado antes do serviço.
-- [ ] Resposta da configuração consultada diretamente.
-- [ ] Serviço iniciado usando a porta recebida do Config Server.
+- [x] Arquivo de configuração criado em `config-repo`.
+- [x] Porta, H2 e Eureka externalizados.
+- [x] Config Server iniciado antes do serviço.
+- [x] Resposta da configuração consultada diretamente.
+- [x] Serviço iniciado usando a porta recebida do Config Server.
 
 **Evidências:** `docs/evidencias/07-config-server.png` e `docs/evidencias/07-porta-configurada.png`
 
@@ -428,9 +428,9 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 8 — Roteamento pelo Gateway
 
-- [ ] Eureka, Config Server, Gateway e `fornecedores-service` em execução.
-- [ ] Consulta realizada pela porta `8085`.
-- [ ] Resposta obtida por descoberta dinâmica, sem rota fixa específica.
+- [x] Eureka, Config Server, Gateway e `fornecedores-service` em execução.
+- [x] Consulta realizada pela porta `8085`.
+- [x] Resposta obtida por descoberta dinâmica, sem rota fixa específica.
 
 **Evidência:** `docs/evidencias/08-gateway-lista.png`
 
@@ -449,10 +449,10 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 10 — Comunicação com `produtos-service` via Feign
 
-- [ ] Dependência OpenFeign adicionada.
-- [ ] Clientes Feign habilitados.
-- [ ] Interface `ProdutoClient` e DTO criados.
-- [ ] `GET /api/fornecedores/produtos` retorna produtos do outro serviço.
+- [x] Dependência OpenFeign adicionada.
+- [x] Clientes Feign habilitados.
+- [x] Interface `ProdutoClient` e DTO criados.
+- [x] `GET /api/fornecedores/produtos` retorna produtos do outro serviço.
 
 **Evidência:** `docs/evidencias/10-feign-produtos.png`
 
@@ -460,12 +460,12 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 11 — Dockerfile, Compose e acesso integrado
 
-- [ ] Dockerfile do `fornecedores-service` criado.
-- [ ] Perfil Docker aponta o Eureka pelo nome do serviço na rede.
-- [ ] Serviço incluído no `infra/docker-compose.yml`.
-- [ ] Infraestrutura iniciada com um único `docker compose up --build`.
-- [ ] Containers em execução.
-- [ ] Fornecedores acessados pelo Gateway.
+- [x] Dockerfile do `fornecedores-service` criado.
+- [x] Perfil Docker aponta o Eureka pelo nome do serviço na rede.
+- [x] Serviço incluído no `infra/docker-compose.yml`.
+- [x] Infraestrutura iniciada com um único `docker compose up --build`.
+- [x] Containers em execução.
+- [x] Fornecedores acessados pelo Gateway.
 
 **Evidências:** `docs/evidencias/11-containers.png` e `docs/evidencias/11-gateway-docker.png`
 
@@ -475,12 +475,12 @@ Crie uma pasta para os arquivos, por exemplo `docs/evidencias/`, e substitua os 
 
 ### Exercício 12 — GitHub Actions
 
-- [ ] Workflow criado em `.github/workflows`.
-- [ ] Gatilho de `push` configurado.
-- [ ] Checkout do repositório realizado.
-- [ ] Java configurado no workflow.
-- [ ] Compilação Maven executada.
-- [ ] Pipeline concluído com check verde.
+- [x] Workflow criado em `.github/workflows`.
+- [x] Gatilho de `push` configurado.
+- [x] Checkout do repositório realizado.
+- [x] Java configurado no workflow.
+- [x] Compilação Maven executada.
+- [x] Pipeline concluído com check verde.
 
 **Evidência:** `docs/evidencias/12-github-actions-verde.png`
 
